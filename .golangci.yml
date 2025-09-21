@@ -14,6 +14,9 @@ linters:
     - misspell
     - staticcheck
     - whitespace
+  exclusions:
+    paths:
+      - gen/ # 生成コードを除外
 
   settings:
     govet:
