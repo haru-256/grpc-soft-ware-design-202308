@@ -2,7 +2,6 @@ package internal
 
 import (
 	"context"
-	"errors"
 	"log/slog"
 	"time"
 
@@ -41,10 +40,6 @@ func (l *Logger) logEnd(ctx context.Context, req connect.AnyRequest, startTime t
 	}
 
 	if err != nil {
-		var connectErr *connect.Error
-		if errors.As(err, &connectErr) {
-			logFields = append(logFields, slog.String("code", connectErr.Code().String()))
-		}
 		logFields = append(logFields, slog.String("error", err.Error()))
 		l.logger.LogAttrs(ctx, slog.LevelError, "finished with error", logFields...)
 	} else {
