@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package chat.v1;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/timestamp.proto";
+
+service ChatService {
+  // ユーザーからのメッセージを受け取り、応答する
+  rpc Say(SayRequest) returns (SayResponse);
+}
+
+message SayRequest {
+  string sentence = 1 [(buf.validate.field).string.min_len = 1];
+}
+
+message SayResponse {
+  string sentence = 1 [(buf.validate.field).string.min_len = 1];
+  google.protobuf.Timestamp responded_at = 2 [(buf.validate.field).timestamp = {}];
+}
