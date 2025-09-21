@@ -47,8 +47,6 @@ func (l *Logger) logEnd(ctx context.Context, req connect.AnyRequest, startTime t
 	}
 }
 
-// file: interceptor/logger.go (続き)
-
 // NewUnaryInterceptor は共通ロガーを使ったUnaryインターセプターを返します。
 func (l *Logger) NewUnaryInterceptor() connect.UnaryInterceptorFunc {
 	return func(next connect.UnaryFunc) connect.UnaryFunc {

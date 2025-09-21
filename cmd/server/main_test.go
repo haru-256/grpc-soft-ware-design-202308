@@ -2,8 +2,8 @@ package main
 
 import (
 	"context"
+	"io"
 	"log/slog"
-	"os"
 	"testing"
 
 	"connectrpc.com/connect"
@@ -12,8 +12,12 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func newTestLogger() *slog.Logger {
+	return slog.New(slog.NewTextHandler(io.Discard, nil))
+}
+
 func TestNewChatServer(t *testing.T) {
-	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
+	logger := newTestLogger()
 	server, err := NewChatServer(logger)
 	require.NoError(t, err, "NewChatServer() should not return error")
 	require.NotNil(t, server, "NewChatServer() should not return nil server")
@@ -25,7 +29,7 @@ func TestNewChatServer(t *testing.T) {
 }
 
 func TestChatServer_Say(t *testing.T) {
-	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
+	logger := newTestLogger()
 	server, err := NewChatServer(logger)
 	require.NoError(t, err, "Failed to create server")
 
@@ -91,7 +95,7 @@ func TestChatServer_Say(t *testing.T) {
 }
 
 func TestChatServer_Say_ContextCancellation(t *testing.T) {
-	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
+	logger := newTestLogger()
 	server, err := NewChatServer(logger)
 	require.NoError(t, err, "Failed to create server")
 
@@ -109,7 +113,7 @@ func TestChatServer_Say_ContextCancellation(t *testing.T) {
 }
 
 func TestChatServer_Say_ContextTimeout(t *testing.T) {
-	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
+	logger := newTestLogger()
 	server, err := NewChatServer(logger)
 	require.NoError(t, err, "Failed to create server")
 
@@ -130,7 +134,7 @@ func TestChatServer_Say_ContextTimeout(t *testing.T) {
 }
 
 func TestChatServer_Say_RequestHeaders(t *testing.T) {
-	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
+	logger := newTestLogger()
 	server, err := NewChatServer(logger)
 	require.NoError(t, err, "Failed to create server")
 
@@ -151,7 +155,7 @@ func TestChatServer_Say_RequestHeaders(t *testing.T) {
 }
 
 func TestChatServer_Say_ResponseValidation(t *testing.T) {
-	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
+	logger := newTestLogger()
 	server, err := NewChatServer(logger)
 	require.NoError(t, err, "Failed to create server")
 
