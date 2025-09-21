@@ -18,8 +18,6 @@ Soft Ware Design 2023年7月号のgRPC特集を基に、最新のツールとラ
 
 ### 4. **GitHub Actions** - CI/CDパイプライン
 
-### 5. **Testify** - Goテストライブラリ
-
 ---
 
 ## 🛠 技術スタック
@@ -29,7 +27,6 @@ Soft Ware Design 2023年7月号のgRPC特集を基に、最新のツールとラ
 | **Protocol Buffers** | Buf CLI | v1.x | .protoファイル管理・コード生成 |
 | **gRPCフレームワーク** | Connect-Go | v1.x | HTTP/gRPC統合サーバー |
 | **バリデーション** | Protovalidate | v0.x | リクエスト/レスポンス検証 |
-| **テスト** | Testify | v1.x | アサーション・テスト |
 | **CI/CD** | GitHub Actions | - | 自動テスト・Lint・破壊的変更検出 |
 
 ---
