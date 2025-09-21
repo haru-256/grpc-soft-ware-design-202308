@@ -14,6 +14,7 @@ import (
 	"connectrpc.com/connect"
 	chatv1 "github.com/haru-256/grpc-soft-ware-design-202307/gen/go/proto/chat/v1"
 	chatv1connect "github.com/haru-256/grpc-soft-ware-design-202307/gen/go/proto/chat/v1/chatv1connect"
+	"github.com/haru-256/grpc-soft-ware-design-202307/internal"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -32,19 +33,20 @@ func init() {
 
 type ChatServer struct {
 	validator protovalidate.Validator
+	logger    *slog.Logger
 }
 
-func NewChatServer() (*ChatServer, error) {
+func NewChatServer(logger *slog.Logger) (*ChatServer, error) {
 	return &ChatServer{
 		validator: globalValidator,
+		logger:    logger,
 	}, nil
 }
 
 func (c *ChatServer) Say(ctx context.Context, req *connect.Request[chatv1.SayRequest]) (*connect.Response[chatv1.SayResponse], error) {
-	slog.Info(
-		"Received request for Greet RPC",
+	c.logger.Info(
+		"Received request for chat RPC",
 		"sentence", req.Msg.GetSentence(),
-		"headers", req.Header(),
 	)
 
 	if err := ctx.Err(); err != nil {
@@ -75,15 +77,19 @@ func main() {
 	ctx, stop := signal.NotifyContext(ctx, os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
-	chatServer, err := NewChatServer()
+	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
+
+	chatServer, err := NewChatServer(logger)
 	if err != nil {
 		slog.Error("Failed to create chat server", "error", err)
 		return
 	}
+	logInterceptor := internal.NewLogger(logger)
+	interceptors := connect.WithInterceptors(logInterceptor.NewUnaryInterceptor())
 
 	mux := http.NewServeMux()
 	// パスとハンドラを登録
-	path, handler := chatv1connect.NewChatServiceHandler(chatServer)
+	path, handler := chatv1connect.NewChatServiceHandler(chatServer, interceptors)
 	mux.Handle(path, handler)
 
 	server := &http.Server{
@@ -93,16 +99,16 @@ func main() {
 
 	// サーバーを別のゴルーチンで起動
 	go func() {
-		slog.Info("Server is starting on port 8080")
+		logger.Info("Server is starting on port 8080")
 		if serveErr := server.ListenAndServe(); serveErr != nil && serveErr != http.ErrServerClosed {
-			slog.Error("Server failed to start", "error", serveErr)
+			logger.Error("Server failed to start", "error", serveErr)
 			stop() // エラー時にコンテキストをキャンセル
 		}
 	}()
 
 	// シグナルを待機
 	<-ctx.Done()
-	slog.Info("Shutdown signal received, starting graceful shutdown...")
+	logger.Info("Shutdown signal received, starting graceful shutdown...")
 
 	// グレースフルシャットダウンのためのタイムアウト付きコンテキスト
 	shutdownCtx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
@@ -110,9 +116,9 @@ func main() {
 
 	// サーバーをグレースフルシャットダウン
 	if shutdownErr := server.Shutdown(shutdownCtx); shutdownErr != nil {
-		slog.Error("Server shutdown failed", "error", shutdownErr)
+		logger.Error("Server shutdown failed", "error", shutdownErr)
 		return
 	}
 
-	slog.Info("Server stopped gracefully")
+	logger.Info("Server stopped gracefully")
 }

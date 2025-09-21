@@ -316,45 +316,155 @@ const client = createPromiseClient(ChatService, createConnectTransport({
 const response = await client.say({sentence: "Hello"});
 ```
 
-    if err := s.validator.Validate(req.Msg); err != nil {
-        return nil, connect.NewError(connect.CodeInvalidArgument, err)
-    }
-    
-    // ビジネスロジック
-    response := &chatv1.SayResponse{
-        Sentence: fmt.Sprintf("You said %s", req.Msg.GetSentence()),
-        RespondedAt: timestamppb.Now(),
-    }
-    
-    return connect.NewResponse(response), nil
+### インターセプター (Interceptors)
+
+Connect-Goのインターセプターは、リクエスト/レスポンスのライフサイクルに割り込んで横断的な処理を実装するための仕組みです。
+
+#### インターセプターとは
+
+インターセプターは **Middleware** や **フィルター** と同じような概念で、以下の目的で使用されます：
+
+- **ログ出力**: リクエスト開始/終了のログ
+- **認証・認可**: トークン検証、ユーザー権限チェック
+- **メトリクス**: レスポンス時間、エラー率の測定
+- **リトライ**: 失敗時の自動再試行
+- **レート制限**: API使用量の制御
+- **バリデーション**: リクエスト/レスポンスの検証
+
+#### インターセプターの実装
+
+**1. 基本的なインターセプター構造**
+
+```go
+type Logger struct {
+    logger *slog.Logger
 }
 
+func NewLogger(logger *slog.Logger) *Logger {
+    return &Logger{logger: logger}
+}
+
+// Unary（単発）リクエスト用インターセプター
+func (l *Logger) NewUnaryInterceptor() connect.UnaryInterceptorFunc {
+    return func(next connect.UnaryFunc) connect.UnaryFunc {
+        return func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
+            // リクエスト前処理
+            startTime := time.Now()
+            l.logStart(ctx, req)
+            
+            // 次の処理（他のインターセプター or 実際のハンドラー）を実行
+            res, err := next(ctx, req)
+            
+            // レスポンス後処理
+            l.logEnd(ctx, req, startTime, err)
+            
+            return res, err
+        }
+    }
+}
 ```
 
-#### 2. HTTP サーバー設定
+**2. ログ出力の詳細実装**
+
+```go
+func (l *Logger) logStart(ctx context.Context, req connect.AnyRequest) {
+    l.logger.LogAttrs(
+        ctx,
+        slog.LevelInfo,
+        "start processing request",
+        slog.String("procedure", req.Spec().Procedure),          // RPC名
+        slog.String("user-agent", req.Header().Get("User-Agent")), // クライアント情報
+        slog.String("http_method", req.HTTPMethod()),             // HTTPメソッド
+        slog.String("peer", req.Peer().Addr),                    // クライアントアドレス
+    )
+}
+
+func (l *Logger) logEnd(ctx context.Context, req connect.AnyRequest, startTime time.Time, err error) {
+    duration := time.Since(startTime)
+    logFields := []slog.Attr{
+        slog.String("procedure", req.Spec().Procedure),
+        slog.String("code", connect.CodeOf(err).String()),
+        slog.Duration("duration", duration),
+    }
+
+    if err != nil {
+        // エラー詳細をログ出力
+        var connectErr *connect.Error
+        if errors.As(err, &connectErr) {
+            logFields = append(logFields, slog.String("code", connectErr.Code().String()))
+        }
+        logFields = append(logFields, slog.String("error", err.Error()))
+        l.logger.LogAttrs(ctx, slog.LevelError, "finished with error", logFields...)
+    } else {
+        l.logger.LogAttrs(ctx, slog.LevelInfo, "finished", logFields...)
+    }
+}
+```
+
+**3. インターセプターの適用**
 
 ```go
 func main() {
-    chatServer := NewChatServer()
-    mux := http.NewServeMux()
+    logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
     
-    // Connect-Goハンドラー生成
-    path, handler := chatv1connect.NewChatServiceHandler(chatServer)
-    mux.Handle(path, handler)
-    
-    // HTTP/2対応サーバー
-    server := &http.Server{
-        Addr: "localhost:8080",
-        Handler: h2c.NewHandler(mux, &http2.Server{}),
+    // チャットサーバー作成
+    chatServer, err := NewChatServer(logger)
+    if err != nil {
+        slog.Error("Failed to create chat server", "error", err)
+        return
     }
+    
+    // インターセプター作成
+    logInterceptor := internal.NewLogger(logger)
+    interceptors := connect.WithInterceptors(logInterceptor.NewUnaryInterceptor())
+    
+    // ハンドラー作成時にインターセプターを適用
+    path, handler := chatv1connect.NewChatServiceHandler(chatServer, interceptors)
+    mux.Handle(path, handler)
 }
 ```
+
+#### インターセプターチェーン
+
+複数のインターセプターを組み合わせることができます：
+
+```go
+// 複数のインターセプターを組み合わせ
+interceptors := connect.WithInterceptors(
+    authInterceptor.NewUnaryInterceptor(),     // 認証
+    metricsInterceptor.NewUnaryInterceptor(),  // メトリクス
+    logInterceptor.NewUnaryInterceptor(),      // ログ
+)
+```
+
+**実行順序**:
+
+```text
+Request → Auth → Metrics → Log → Handler → Log → Metrics → Auth → Response
+```
+
+#### 実際のログ出力例
+
+サーバー起動後のログ出力：
+
+```
+time=2025-09-22T00:02:53.328+09:00 level=INFO msg="start processing request" procedure=/chat.v1.ChatService/Say user-agent=test-client http_method=POST peer=127.0.0.1:54321
+time=2025-09-22T00:02:53.335+09:00 level=INFO msg="Received request for chat RPC" sentence=Hello
+time=2025-09-22T00:02:53.336+09:00 level=INFO msg="finished" procedure=/chat.v1.ChatService/Say code=OK duration=8.123ms
+```
+
+#### インターセプターの利点
+
+1. **横断的関心事の分離**: ビジネスロジックとインフラ処理を分離
+2. **再利用性**: 複数のサービスで同じインターセプターを利用可能
+3. **テスタビリティ**: インターセプターとビジネスロジックを独立してテスト
+4. **設定の柔軟性**: 環境に応じてインターセプターを組み合わせ可能
 
 ### 重要な学習ポイント
 
 #### mux, server, handler の関係
 
-```
+```text
 HTTP Request → HTTP Server → mux (Router) → handler (Connect) → Service (ビジネスロジック)
 ```
 
@@ -368,6 +478,16 @@ HTTP Request → HTTP Server → mux (Router) → handler (Connect) → Service 
 - **gRPC要件**: gRPCはHTTP/2プロトコルベース
 - **開発環境**: TLS証明書なしでHTTP/2を使用
 - **本番環境**: 通常はTLS付きHTTP/2を使用
+
+#### インターセプター vs 従来のミドルウェア
+
+| 特徴 | Connect-Go インターセプター | 従来のHTTPミドルウェア |
+|------|---------------------------|----------------------|
+| **適用レベル** | gRPCメソッドレベル | HTTPリクエストレベル |
+| **型安全性** | Protocol Buffers型対応 | 汎用的なHTTP処理 |
+| **エラー処理** | gRPCエラーコード対応 | HTTPステータスコード |
+| **メタデータ** | gRPCメタデータアクセス | HTTPヘッダーのみ |
+| **ストリーミング** | ストリーミングRPC対応 | リクエスト/レスポンス単位 |
 
 ---
 
