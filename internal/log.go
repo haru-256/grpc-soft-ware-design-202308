@@ -24,7 +24,7 @@ func (l *Logger) logStart(ctx context.Context, req connect.AnyRequest) {
 		ctx,
 		slog.LevelInfo,
 		"start processing request",
-		slog.String("produce", req.Spec().Procedure),
+slog.String("procedure", req.Spec().Procedure),
 		slog.String("user-agent", req.Header().Get("User-Agent")),
 		slog.String("http_method", req.HTTPMethod()),
 		slog.String("peer", req.Peer().Addr),
