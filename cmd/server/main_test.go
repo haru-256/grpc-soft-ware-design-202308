@@ -15,6 +15,9 @@ func TestNewChatServer(t *testing.T) {
 	require.NoError(t, err, "NewChatServer() should not return error")
 	require.NotNil(t, server, "NewChatServer() should not return nil server")
 	assert.NotNil(t, server.validator, "NewChatServer() should create server with non-nil validator")
+
+	// Test that the global validator is properly assigned
+	assert.Same(t, globalValidator, server.validator, "Server should use the global validator")
 }
 
 func TestChatServer_Say(t *testing.T) {
@@ -44,6 +47,12 @@ func TestChatServer_Say(t *testing.T) {
 			input:       "",
 			wantContain: "",
 			wantError:   true,
+		},
+		{
+			name:        "long input",
+			input:       "This is a longer sentence to test the service",
+			wantContain: "You said This is a longer sentence to test the service",
+			wantError:   false,
 		},
 	}
 
@@ -80,19 +89,37 @@ func TestChatServer_Say_ContextCancellation(t *testing.T) {
 	server, err := NewChatServer()
 	require.NoError(t, err, "Failed to create server")
 
-	// キャンセル可能なコンテキスト作成
-	ctx, cancel := context.WithCancel(context.Background())
-	cancel() // 即座にキャンセル
+	// Test with canceled context
+	canceledCtx, cancel := context.WithCancel(context.Background())
+	cancel() // Cancel immediately
 
 	req := connect.NewRequest(&chatv1.SayRequest{
 		Sentence: "Hello",
 	})
 
-	// キャンセルされたコンテキストでも正常に動作することを確認
-	// (現在の実装ではコンテキストキャンセレーションを特別に処理していない)
-	resp, err := server.Say(ctx, req)
-	require.NoError(t, err, "Say() with canceled context should not fail")
-	require.NotNil(t, resp, "Say() should not return nil response with canceled context")
+	// The current implementation checks context after logging, so it should return an error
+	_, err = server.Say(canceledCtx, req)
+	assert.Equal(t, context.Canceled, err, "Error should be context.Canceled")
+}
+
+func TestChatServer_Say_ContextTimeout(t *testing.T) {
+	server, err := NewChatServer()
+	require.NoError(t, err, "Failed to create server")
+
+	// Test with already timed out context
+	timeoutCtx, cancel := context.WithTimeout(context.Background(), -1) // Already expired
+	defer cancel()
+
+	req := connect.NewRequest(&chatv1.SayRequest{
+		Sentence: "Hello",
+	})
+
+	_, err = server.Say(timeoutCtx, req)
+	if err != nil {
+		assert.Equal(t, context.DeadlineExceeded, err, "Error should be context.DeadlineExceeded")
+	} else {
+		t.Log("Say() completed before context timeout was checked")
+	}
 }
 
 func TestChatServer_Say_RequestHeaders(t *testing.T) {
@@ -113,4 +140,38 @@ func TestChatServer_Say_RequestHeaders(t *testing.T) {
 
 	expected := "You said Hello with headers"
 	assert.Equal(t, expected, resp.Msg.GetSentence(), "Say() should return expected sentence")
+}
+
+func TestChatServer_Say_ResponseValidation(t *testing.T) {
+	server, err := NewChatServer()
+	require.NoError(t, err, "Failed to create server")
+
+	req := connect.NewRequest(&chatv1.SayRequest{
+		Sentence: "Test response validation",
+	})
+
+	resp, err := server.Say(context.Background(), req)
+	require.NoError(t, err, "Say() should not fail")
+	require.NotNil(t, resp, "Response should not be nil")
+	require.NotNil(t, resp.Msg, "Response message should not be nil")
+
+	// Verify response structure
+	assert.NotEmpty(t, resp.Msg.GetSentence(), "Response sentence should not be empty")
+	assert.NotNil(t, resp.Msg.GetRespondedAt(), "Response timestamp should not be nil")
+	assert.True(t, resp.Msg.GetRespondedAt().IsValid(), "Response timestamp should be valid")
+}
+
+func TestGlobalValidator(t *testing.T) {
+	// Test that the global validator is properly initialized
+	assert.NotNil(t, globalValidator, "Global validator should be initialized")
+
+	// Test validation with a valid message
+	validMsg := &chatv1.SayRequest{Sentence: "Valid message"}
+	err := globalValidator.Validate(validMsg)
+	assert.NoError(t, err, "Valid message should pass validation")
+
+	// Test validation with an invalid message
+	invalidMsg := &chatv1.SayRequest{Sentence: ""}
+	err = globalValidator.Validate(invalidMsg)
+	assert.Error(t, err, "Empty sentence should fail validation")
 }

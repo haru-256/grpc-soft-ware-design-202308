@@ -23,6 +23,7 @@ func main() {
 	)
 	if err != nil {
 		slog.Error("RPC failed", "error", err)
+		return
 	}
 	slog.Info("RPC response received", "response", res.Msg)
 }

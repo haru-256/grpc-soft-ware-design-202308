@@ -47,6 +47,10 @@ func (c *ChatServer) Say(ctx context.Context, req *connect.Request[chatv1.SayReq
 		"headers", req.Header(),
 	)
 
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
+
 	if err := c.validator.Validate(req.Msg); err != nil {
 		slog.Error(" Request validation failed", "error", err)
 		return nil, connect.NewError(connect.CodeInvalidArgument, fmt.Errorf("validation error: %w", err))
