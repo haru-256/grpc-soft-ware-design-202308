@@ -59,7 +59,7 @@ func (c *ChatServer) Say(ctx context.Context, req *connect.Request[chatv1.SayReq
 
 	if err := c.validator.Validate(res); err != nil {
 		slog.Error("Response validation failed", "error", err)
-		return nil, connect.NewError(connect.CodeInvalidArgument, fmt.Errorf("validation error: %w", err))
+		return nil, connect.NewError(connect.CodeInternal, fmt.Errorf("validation error: %w", err))
 	}
 
 	// ここにビジネスロジックを実装
