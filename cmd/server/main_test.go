@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"log/slog"
+	"os"
 	"testing"
 
 	"connectrpc.com/connect"
@@ -11,17 +13,20 @@ import (
 )
 
 func TestNewChatServer(t *testing.T) {
-	server, err := NewChatServer()
+	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
+	server, err := NewChatServer(logger)
 	require.NoError(t, err, "NewChatServer() should not return error")
 	require.NotNil(t, server, "NewChatServer() should not return nil server")
 	assert.NotNil(t, server.validator, "NewChatServer() should create server with non-nil validator")
+	assert.NotNil(t, server.logger, "NewChatServer() should create server with non-nil logger")
 
 	// Test that the global validator is properly assigned
 	assert.Same(t, globalValidator, server.validator, "Server should use the global validator")
 }
 
 func TestChatServer_Say(t *testing.T) {
-	server, err := NewChatServer()
+	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
+	server, err := NewChatServer(logger)
 	require.NoError(t, err, "Failed to create server")
 
 	tests := []struct {
@@ -86,7 +91,8 @@ func TestChatServer_Say(t *testing.T) {
 }
 
 func TestChatServer_Say_ContextCancellation(t *testing.T) {
-	server, err := NewChatServer()
+	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
+	server, err := NewChatServer(logger)
 	require.NoError(t, err, "Failed to create server")
 
 	// Test with canceled context
@@ -103,7 +109,8 @@ func TestChatServer_Say_ContextCancellation(t *testing.T) {
 }
 
 func TestChatServer_Say_ContextTimeout(t *testing.T) {
-	server, err := NewChatServer()
+	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
+	server, err := NewChatServer(logger)
 	require.NoError(t, err, "Failed to create server")
 
 	// Test with already timed out context
@@ -123,7 +130,8 @@ func TestChatServer_Say_ContextTimeout(t *testing.T) {
 }
 
 func TestChatServer_Say_RequestHeaders(t *testing.T) {
-	server, err := NewChatServer()
+	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
+	server, err := NewChatServer(logger)
 	require.NoError(t, err, "Failed to create server")
 
 	req := connect.NewRequest(&chatv1.SayRequest{
@@ -143,7 +151,8 @@ func TestChatServer_Say_RequestHeaders(t *testing.T) {
 }
 
 func TestChatServer_Say_ResponseValidation(t *testing.T) {
-	server, err := NewChatServer()
+	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
+	server, err := NewChatServer(logger)
 	require.NoError(t, err, "Failed to create server")
 
 	req := connect.NewRequest(&chatv1.SayRequest{
