@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.9
 // 	protoc        (unknown)
-// source: proto/address_book/v1/address_book.proto
+// source: address_book/v1/address_book.proto
 
 package address_bookv1
 
@@ -59,11 +59,11 @@ func (x PhoneType) String() string {
 }
 
 func (PhoneType) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_address_book_v1_address_book_proto_enumTypes[0].Descriptor()
+	return file_address_book_v1_address_book_proto_enumTypes[0].Descriptor()
 }
 
 func (PhoneType) Type() protoreflect.EnumType {
-	return &file_proto_address_book_v1_address_book_proto_enumTypes[0]
+	return &file_address_book_v1_address_book_proto_enumTypes[0]
 }
 
 func (x PhoneType) Number() protoreflect.EnumNumber {
@@ -72,7 +72,7 @@ func (x PhoneType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use PhoneType.Descriptor instead.
 func (PhoneType) EnumDescriptor() ([]byte, []int) {
-	return file_proto_address_book_v1_address_book_proto_rawDescGZIP(), []int{0}
+	return file_address_book_v1_address_book_proto_rawDescGZIP(), []int{0}
 }
 
 type FindByNameRequest struct {
@@ -84,7 +84,7 @@ type FindByNameRequest struct {
 
 func (x *FindByNameRequest) Reset() {
 	*x = FindByNameRequest{}
-	mi := &file_proto_address_book_v1_address_book_proto_msgTypes[0]
+	mi := &file_address_book_v1_address_book_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -96,7 +96,7 @@ func (x *FindByNameRequest) String() string {
 func (*FindByNameRequest) ProtoMessage() {}
 
 func (x *FindByNameRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_address_book_v1_address_book_proto_msgTypes[0]
+	mi := &file_address_book_v1_address_book_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -109,7 +109,7 @@ func (x *FindByNameRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FindByNameRequest.ProtoReflect.Descriptor instead.
 func (*FindByNameRequest) Descriptor() ([]byte, []int) {
-	return file_proto_address_book_v1_address_book_proto_rawDescGZIP(), []int{0}
+	return file_address_book_v1_address_book_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *FindByNameRequest) GetName() string {
@@ -128,7 +128,7 @@ type FindByNameResponse struct {
 
 func (x *FindByNameResponse) Reset() {
 	*x = FindByNameResponse{}
-	mi := &file_proto_address_book_v1_address_book_proto_msgTypes[1]
+	mi := &file_address_book_v1_address_book_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -140,7 +140,7 @@ func (x *FindByNameResponse) String() string {
 func (*FindByNameResponse) ProtoMessage() {}
 
 func (x *FindByNameResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_address_book_v1_address_book_proto_msgTypes[1]
+	mi := &file_address_book_v1_address_book_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -153,7 +153,7 @@ func (x *FindByNameResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FindByNameResponse.ProtoReflect.Descriptor instead.
 func (*FindByNameResponse) Descriptor() ([]byte, []int) {
-	return file_proto_address_book_v1_address_book_proto_rawDescGZIP(), []int{1}
+	return file_address_book_v1_address_book_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *FindByNameResponse) GetProfile() *Profile {
@@ -176,7 +176,7 @@ type Profile struct {
 
 func (x *Profile) Reset() {
 	*x = Profile{}
-	mi := &file_proto_address_book_v1_address_book_proto_msgTypes[2]
+	mi := &file_address_book_v1_address_book_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -188,7 +188,7 @@ func (x *Profile) String() string {
 func (*Profile) ProtoMessage() {}
 
 func (x *Profile) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_address_book_v1_address_book_proto_msgTypes[2]
+	mi := &file_address_book_v1_address_book_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -201,7 +201,7 @@ func (x *Profile) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Profile.ProtoReflect.Descriptor instead.
 func (*Profile) Descriptor() ([]byte, []int) {
-	return file_proto_address_book_v1_address_book_proto_rawDescGZIP(), []int{2}
+	return file_address_book_v1_address_book_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *Profile) GetId() int32 {
@@ -249,7 +249,7 @@ type Profile_PhoneNumber struct {
 
 func (x *Profile_PhoneNumber) Reset() {
 	*x = Profile_PhoneNumber{}
-	mi := &file_proto_address_book_v1_address_book_proto_msgTypes[3]
+	mi := &file_address_book_v1_address_book_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -261,7 +261,7 @@ func (x *Profile_PhoneNumber) String() string {
 func (*Profile_PhoneNumber) ProtoMessage() {}
 
 func (x *Profile_PhoneNumber) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_address_book_v1_address_book_proto_msgTypes[3]
+	mi := &file_address_book_v1_address_book_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -274,7 +274,7 @@ func (x *Profile_PhoneNumber) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Profile_PhoneNumber.ProtoReflect.Descriptor instead.
 func (*Profile_PhoneNumber) Descriptor() ([]byte, []int) {
-	return file_proto_address_book_v1_address_book_proto_rawDescGZIP(), []int{2, 0}
+	return file_address_book_v1_address_book_proto_rawDescGZIP(), []int{2, 0}
 }
 
 func (x *Profile_PhoneNumber) GetNumber() string {
@@ -291,11 +291,11 @@ func (x *Profile_PhoneNumber) GetPhoneType() PhoneType {
 	return PhoneType_PHONE_TYPE_UNSPECIFIED
 }
 
-var File_proto_address_book_v1_address_book_proto protoreflect.FileDescriptor
+var File_address_book_v1_address_book_proto protoreflect.FileDescriptor
 
-const file_proto_address_book_v1_address_book_proto_rawDesc = "" +
+const file_address_book_v1_address_book_proto_rawDesc = "" +
 	"\n" +
-	"(proto/address_book/v1/address_book.proto\x12\x0faddress_book.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"0\n" +
+	"\"address_book/v1/address_book.proto\x12\x0faddress_book.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"0\n" +
 	"\x11FindByNameRequest\x12\x1b\n" +
 	"\x04name\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x04name\"H\n" +
 	"\x12FindByNameResponse\x122\n" +
@@ -318,24 +318,24 @@ const file_proto_address_book_v1_address_book_proto_rawDesc = "" +
 	"\x0fPHONE_TYPE_WORK\x10\x032k\n" +
 	"\x12AddressBookService\x12U\n" +
 	"\n" +
-	"FindByName\x12\".address_book.v1.FindByNameRequest\x1a#.address_book.v1.FindByNameResponseB\xde\x01\n" +
-	"\x13com.address_book.v1B\x10AddressBookProtoP\x01Z\\github.com/haru-256/grpc-soft-ware-design-202307/gen/go/proto/address_book/v1;address_bookv1\xa2\x02\x03AXX\xaa\x02\x0eAddressBook.V1\xca\x02\x0eAddressBook\\V1\xe2\x02\x1aAddressBook\\V1\\GPBMetadata\xea\x02\x0fAddressBook::V1b\x06proto3"
+	"FindByName\x12\".address_book.v1.FindByNameRequest\x1a#.address_book.v1.FindByNameResponseB\xd8\x01\n" +
+	"\x13com.address_book.v1B\x10AddressBookProtoP\x01ZVgithub.com/haru-256/grpc-soft-ware-design-202307/gen/go/address_book/v1;address_bookv1\xa2\x02\x03AXX\xaa\x02\x0eAddressBook.V1\xca\x02\x0eAddressBook\\V1\xe2\x02\x1aAddressBook\\V1\\GPBMetadata\xea\x02\x0fAddressBook::V1b\x06proto3"
 
 var (
-	file_proto_address_book_v1_address_book_proto_rawDescOnce sync.Once
-	file_proto_address_book_v1_address_book_proto_rawDescData []byte
+	file_address_book_v1_address_book_proto_rawDescOnce sync.Once
+	file_address_book_v1_address_book_proto_rawDescData []byte
 )
 
-func file_proto_address_book_v1_address_book_proto_rawDescGZIP() []byte {
-	file_proto_address_book_v1_address_book_proto_rawDescOnce.Do(func() {
-		file_proto_address_book_v1_address_book_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_proto_address_book_v1_address_book_proto_rawDesc), len(file_proto_address_book_v1_address_book_proto_rawDesc)))
+func file_address_book_v1_address_book_proto_rawDescGZIP() []byte {
+	file_address_book_v1_address_book_proto_rawDescOnce.Do(func() {
+		file_address_book_v1_address_book_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_address_book_v1_address_book_proto_rawDesc), len(file_address_book_v1_address_book_proto_rawDesc)))
 	})
-	return file_proto_address_book_v1_address_book_proto_rawDescData
+	return file_address_book_v1_address_book_proto_rawDescData
 }
 
-var file_proto_address_book_v1_address_book_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_proto_address_book_v1_address_book_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
-var file_proto_address_book_v1_address_book_proto_goTypes = []any{
+var file_address_book_v1_address_book_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_address_book_v1_address_book_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_address_book_v1_address_book_proto_goTypes = []any{
 	(PhoneType)(0),                // 0: address_book.v1.PhoneType
 	(*FindByNameRequest)(nil),     // 1: address_book.v1.FindByNameRequest
 	(*FindByNameResponse)(nil),    // 2: address_book.v1.FindByNameResponse
@@ -343,7 +343,7 @@ var file_proto_address_book_v1_address_book_proto_goTypes = []any{
 	(*Profile_PhoneNumber)(nil),   // 4: address_book.v1.Profile.PhoneNumber
 	(*timestamppb.Timestamp)(nil), // 5: google.protobuf.Timestamp
 }
-var file_proto_address_book_v1_address_book_proto_depIdxs = []int32{
+var file_address_book_v1_address_book_proto_depIdxs = []int32{
 	3, // 0: address_book.v1.FindByNameResponse.profile:type_name -> address_book.v1.Profile
 	4, // 1: address_book.v1.Profile.phone_numbers:type_name -> address_book.v1.Profile.PhoneNumber
 	5, // 2: address_book.v1.Profile.last_update_time:type_name -> google.protobuf.Timestamp
@@ -357,28 +357,28 @@ var file_proto_address_book_v1_address_book_proto_depIdxs = []int32{
 	0, // [0:4] is the sub-list for field type_name
 }
 
-func init() { file_proto_address_book_v1_address_book_proto_init() }
-func file_proto_address_book_v1_address_book_proto_init() {
-	if File_proto_address_book_v1_address_book_proto != nil {
+func init() { file_address_book_v1_address_book_proto_init() }
+func file_address_book_v1_address_book_proto_init() {
+	if File_address_book_v1_address_book_proto != nil {
 		return
 	}
-	file_proto_address_book_v1_address_book_proto_msgTypes[2].OneofWrappers = []any{}
+	file_address_book_v1_address_book_proto_msgTypes[2].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_address_book_v1_address_book_proto_rawDesc), len(file_proto_address_book_v1_address_book_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_address_book_v1_address_book_proto_rawDesc), len(file_address_book_v1_address_book_proto_rawDesc)),
 			NumEnums:      1,
 			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_proto_address_book_v1_address_book_proto_goTypes,
-		DependencyIndexes: file_proto_address_book_v1_address_book_proto_depIdxs,
-		EnumInfos:         file_proto_address_book_v1_address_book_proto_enumTypes,
-		MessageInfos:      file_proto_address_book_v1_address_book_proto_msgTypes,
+		GoTypes:           file_address_book_v1_address_book_proto_goTypes,
+		DependencyIndexes: file_address_book_v1_address_book_proto_depIdxs,
+		EnumInfos:         file_address_book_v1_address_book_proto_enumTypes,
+		MessageInfos:      file_address_book_v1_address_book_proto_msgTypes,
 	}.Build()
-	File_proto_address_book_v1_address_book_proto = out.File
-	file_proto_address_book_v1_address_book_proto_goTypes = nil
-	file_proto_address_book_v1_address_book_proto_depIdxs = nil
+	File_address_book_v1_address_book_proto = out.File
+	file_address_book_v1_address_book_proto_goTypes = nil
+	file_address_book_v1_address_book_proto_depIdxs = nil
 }

@@ -6,7 +6,12 @@ managed:
   enabled: true
   override:
     - file_option: go_package_prefix
-      value: github.com/haru-256/grpc-soft-ware-design-202307/gen/go # Goのコードを生成する際のimportパスのprefixを指定, 生成される物理パスとあわせる
+      value: github.com/haru-256/grpc-soft-ware-design-202307/gen/go
+  disable:
+    # これがないと、validateのimportパスに上記のprefixがついてしまう
+    # https://buf.build/docs/bsr/quickstart/?utm_source=chatgpt.com#generate-code
+    - file_option: go_package
+      module: buf.build/bufbuild/protovalidate
 
 plugins:
   # Protoに定義されたmessageをGoのコードを生成するプラグイン
@@ -22,3 +27,11 @@ plugins:
     out: gen/docs
     opt:
       - markdown,README.md
+  - remote: buf.build/bufbuild/validate-go:v1.2.1
+    out: gen/go
+    opt:
+      - paths=source_relative
+  - remote: buf.build/connectrpc/go:v1.18.1
+    out: gen/go
+    opt:
+      - paths=source_relative

@@ -3,28 +3,34 @@
 
 ## Table of Contents
 
-- [proto/address_book/v1/address_book.proto](#proto_address_book_v1_address_book-proto)
-    - [FindByNameRequest](#proto-address_book-v1-FindByNameRequest)
-    - [FindByNameResponse](#proto-address_book-v1-FindByNameResponse)
-    - [Profile](#proto-address_book-v1-Profile)
-    - [Profile.PhoneNumber](#proto-address_book-v1-Profile-PhoneNumber)
+- [address_book/v1/address_book.proto](#address_book_v1_address_book-proto)
+    - [FindByNameRequest](#address_book-v1-FindByNameRequest)
+    - [FindByNameResponse](#address_book-v1-FindByNameResponse)
+    - [Profile](#address_book-v1-Profile)
+    - [Profile.PhoneNumber](#address_book-v1-Profile-PhoneNumber)
   
-    - [PhoneType](#proto-address_book-v1-PhoneType)
+    - [PhoneType](#address_book-v1-PhoneType)
   
-    - [AddressBookService](#proto-address_book-v1-AddressBookService)
+    - [AddressBookService](#address_book-v1-AddressBookService)
+  
+- [chat/v1/chat.proto](#chat_v1_chat-proto)
+    - [SayRequest](#chat-v1-SayRequest)
+    - [SayResponse](#chat-v1-SayResponse)
+  
+    - [ChatService](#chat-v1-ChatService)
   
 - [Scalar Value Types](#scalar-value-types)
 
 
 
-<a name="proto_address_book_v1_address_book-proto"></a>
+<a name="address_book_v1_address_book-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## proto/address_book/v1/address_book.proto
+## address_book/v1/address_book.proto
 
 
 
-<a name="proto-address_book-v1-FindByNameRequest"></a>
+<a name="address_book-v1-FindByNameRequest"></a>
 
 ### FindByNameRequest
 
@@ -39,7 +45,7 @@
 
 
 
-<a name="proto-address_book-v1-FindByNameResponse"></a>
+<a name="address_book-v1-FindByNameResponse"></a>
 
 ### FindByNameResponse
 
@@ -47,14 +53,14 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| profile | [Profile](#proto-address_book-v1-Profile) |  |  |
+| profile | [Profile](#address_book-v1-Profile) |  |  |
 
 
 
 
 
 
-<a name="proto-address_book-v1-Profile"></a>
+<a name="address_book-v1-Profile"></a>
 
 ### Profile
 
@@ -65,7 +71,7 @@
 | id | [int32](#int32) |  |  |
 | full_name | [string](#string) |  |  |
 | email | [string](#string) | optional |  |
-| phone_numbers | [Profile.PhoneNumber](#proto-address_book-v1-Profile-PhoneNumber) | repeated |  |
+| phone_numbers | [Profile.PhoneNumber](#address_book-v1-Profile-PhoneNumber) | repeated |  |
 | last_update_time | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  |  |
 
 
@@ -73,7 +79,7 @@
 
 
 
-<a name="proto-address_book-v1-Profile-PhoneNumber"></a>
+<a name="address_book-v1-Profile-PhoneNumber"></a>
 
 ### Profile.PhoneNumber
 
@@ -82,7 +88,7 @@
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | number | [string](#string) |  |  |
-| phone_type | [PhoneType](#proto-address_book-v1-PhoneType) |  |  |
+| phone_type | [PhoneType](#address_book-v1-PhoneType) |  |  |
 
 
 
@@ -91,7 +97,7 @@
  
 
 
-<a name="proto-address_book-v1-PhoneType"></a>
+<a name="address_book-v1-PhoneType"></a>
 
 ### PhoneType
 
@@ -109,16 +115,73 @@
  
 
 
-<a name="proto-address_book-v1-AddressBookService"></a>
+<a name="address_book-v1-AddressBookService"></a>
 
 ### AddressBookService
 
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| FindByName | [FindByNameRequest](#proto-address_book-v1-FindByNameRequest) | [FindByNameResponse](#proto-address_book-v1-FindByNameResponse) | 電話帳から電話番号を検索する
+| FindByName | [FindByNameRequest](#address_book-v1-FindByNameRequest) | [FindByNameResponse](#address_book-v1-FindByNameResponse) | 電話帳から電話番号を検索する
 
 [Error] - NotFound: 指定された名前のプロフィールが存在しない場合 |
+
+ 
+
+
+
+<a name="chat_v1_chat-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## chat/v1/chat.proto
+
+
+
+<a name="chat-v1-SayRequest"></a>
+
+### SayRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| sentence | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="chat-v1-SayResponse"></a>
+
+### SayResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| sentence | [string](#string) |  |  |
+| responded_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  |  |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+
+<a name="chat-v1-ChatService"></a>
+
+### ChatService
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| Say | [SayRequest](#chat-v1-SayRequest) | [SayResponse](#chat-v1-SayResponse) | ユーザーからのメッセージを受け取り、応答する |
 
  
 

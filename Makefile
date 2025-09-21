@@ -7,6 +7,7 @@ init: ## Initial setup
 
 .PHONY: generate
 generate:  ## Generate gRPC code
+	buf dep update
 	buf generate
 
 .PHONY: lint
@@ -18,6 +19,17 @@ lint:  ## Lint proto and go files
 fmt:  ## Format proto and go files
 	buf format -w .
 	go fmt ./...
+
+.PHONY: curl-grpc
+curl-grpc: ## Test with curl (gRPC)
+	buf curl --protocol grpc --http2-prior-knowledge \
+		--schema . \
+		--data '{"sentence": "I am haru256."}' \
+		http://localhost:8080/chat.v1.ChatService/Say
+
+.PHONY: test
+test: ## Run tests
+	go test $$(go list ./... | grep -v /gen/)
 
 .PHONY: help
 help: ## Show options

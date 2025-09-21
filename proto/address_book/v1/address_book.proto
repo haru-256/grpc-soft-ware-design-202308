@@ -1,7 +1,8 @@
 syntax = "proto3";
 
-package proto.address_book.v1;
+package address_book.v1;
 
+import "buf/validate/validate.proto";
 import "google/protobuf/timestamp.proto";
 
 service AddressBookService {
@@ -13,7 +14,7 @@ service AddressBookService {
 }
 
 message FindByNameRequest {
-  string name = 1;
+  string name = 1 [(buf.validate.field).string.min_len = 1];
 }
 
 message FindByNameResponse {
@@ -22,11 +23,14 @@ message FindByNameResponse {
 
 message Profile {
   int32 id = 1;
-  string full_name = 2;
-  optional string email = 3;
+  string full_name = 2 [(buf.validate.field).string.min_len = 1];
+  optional string email = 3 [(buf.validate.field).string.email = true];
 
   message PhoneNumber {
-    string number = 1;
+    string number = 1 [
+      (buf.validate.field).string.min_len = 6,
+      (buf.validate.field).string.max_len = 32
+    ];
     PhoneType phone_type = 2;
   }
 
