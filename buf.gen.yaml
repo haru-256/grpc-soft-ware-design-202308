@@ -1,0 +1,24 @@
+# v2に更新
+version: v2
+
+# v2の主要機能である managed モードの設定
+managed:
+  enabled: true
+  override:
+    - file_option: go_package_prefix
+      value: github.com/haru-256/grpc-soft-ware-design-202307/gen/go # Goのコードを生成する際のimportパスのprefixを指定, 生成される物理パスとあわせる
+
+plugins:
+  # Protoに定義されたmessageをGoのコードを生成するプラグイン
+  - remote: buf.build/protocolbuffers/go:v1.36.9
+    out: gen/go
+    opt: paths=source_relative
+  # GoのgRPCコードを生成するプラグイン
+  - remote: buf.build/grpc/go
+    out: gen/go
+    opt: paths=source_relative
+  # Markdown 1ファイル出力
+  - remote: buf.build/community/pseudomuto-doc:v1.5.1
+    out: gen/docs
+    opt:
+      - markdown,README.md

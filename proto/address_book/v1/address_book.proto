@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package proto.address_book.v1;
+
+import "google/protobuf/timestamp.proto";
+
+service AddressBookService {
+  // 電話帳から電話番号を検索する
+  //
+  // [Error]
+  // - NotFound: 指定された名前のプロフィールが存在しない場合
+  rpc FindByName(FindByNameRequest) returns (FindByNameResponse);
+}
+
+message FindByNameRequest {
+  string name = 1;
+}
+
+message FindByNameResponse {
+  Profile profile = 1;
+}
+
+message Profile {
+  int32 id = 1;
+  string full_name = 2;
+  optional string email = 3;
+
+  message PhoneNumber {
+    string number = 1;
+    PhoneType phone_type = 2;
+  }
+
+  repeated PhoneNumber phone_numbers = 4;
+  google.protobuf.Timestamp last_update_time = 5;
+}
+
+enum PhoneType {
+  PHONE_TYPE_UNSPECIFIED = 0;
+  PHONE_TYPE_MOBILE = 1;
+  PHONE_TYPE_HOME = 2;
+  PHONE_TYPE_WORK = 3;
+}
