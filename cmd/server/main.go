@@ -34,6 +34,7 @@ func init() {
 type ChatServer struct {
 	validator protovalidate.Validator
 	logger    *slog.Logger
+	chatv1.UnimplementedChatServiceServer
 }
 
 func NewChatServer(logger *slog.Logger) (*ChatServer, error) {

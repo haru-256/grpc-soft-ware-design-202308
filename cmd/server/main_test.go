@@ -188,3 +188,34 @@ func TestGlobalValidator(t *testing.T) {
 	err = globalValidator.Validate(invalidMsg)
 	assert.Error(t, err, "Empty sentence should fail validation")
 }
+
+func TestChatServer_ForwardCompatibility(t *testing.T) {
+	logger := newTestLogger()
+	server, err := NewChatServer(logger)
+	require.NoError(t, err, "Failed to create server")
+
+	// Test that the server embeds UnimplementedChatServiceServer for forward compatibility
+	// This ensures that if new RPC methods are added to the service definition,
+	// the server will automatically return "Unimplemented" instead of causing compilation errors
+
+	// The embedded UnimplementedChatServiceServer should be accessible
+	// This is a compile-time check that ensures forward compatibility
+	assert.NotNil(t, server.UnimplementedChatServiceServer, "Server should embed UnimplementedChatServiceServer for forward compatibility")
+
+	// Test that the current implementation still works correctly
+	req := connect.NewRequest(&chatv1.SayRequest{
+		Sentence: "Testing forward compatibility",
+	})
+
+	resp, err := server.Say(context.Background(), req)
+	require.NoError(t, err, "Say() should work normally with forward compatibility enabled")
+	require.NotNil(t, resp, "Response should not be nil")
+
+	expected := "You said Testing forward compatibility"
+	assert.Equal(t, expected, resp.Msg.GetSentence(), "Say() should return expected sentence")
+
+	// Verify that the server structure includes the forward compatibility field
+	// This test ensures that future gRPC service definition changes won't break compilation
+	assert.IsType(t, chatv1.UnimplementedChatServiceServer{}, server.UnimplementedChatServiceServer,
+		"Server should properly embed UnimplementedChatServiceServer for forward compatibility")
+}
